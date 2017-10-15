@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/loginItem"
+        android:title="@string/Login"/>
+
+    <item
+        android:id="@+id/registrationItem"
+        android:title="@string/Registration"/>
+
+    <item
+        android:id="@+id/BandejaEItem"
+        android:title="@string/BandejaE"/>
+
+    <item
+        android:id="@+id/salirItem"
+        android:title="@string/Salir"/>
+
+
+</menu>
+
+
+
+
+
+
