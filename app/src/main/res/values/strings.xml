@@ -29,4 +29,8 @@
     <string name="isRegister">isRegister</string>
     <string name="empty_not_saved">No persistida</string>
     <string name="Centrales">Centrales</string>
+    <string name="nuevo_subdominio">Subdominio</string>
+    <string name="nuevo_puerto">Nuevo Puerto</string>
+    <string name="vincular_boton">Vincular</string>
+    <string name="cancelar">Cancelar</string>
 </resources>

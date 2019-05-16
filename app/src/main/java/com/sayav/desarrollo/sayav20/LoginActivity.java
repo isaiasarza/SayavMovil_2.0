@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
             if(verificarPassword(password.getText().toString(), cursor.getString(4))){
                 Toast.makeText(this, "Bienvenido: " + cursor.getString(1) + " " + cursor.getString(2), Toast.LENGTH_SHORT).show();
                 setBooleanControl();
-                Intent intent = new Intent(this, VincularActivity.class);
+                Intent intent = new Intent(this, CentralesActivity.class);
                 startActivity(intent);
                 return;
             }

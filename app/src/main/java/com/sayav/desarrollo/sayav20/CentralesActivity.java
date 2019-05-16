@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,8 +47,8 @@ public class CentralesActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(CentralesActivity.this, VincularActivity.class);
-                startActivityForResult(intent, NEW_CENTRAL_ACTIVITY_REQUEST_CODE);
+                DialogFragment newFragment = new VincularDialog();
+                newFragment.show(getSupportFragmentManager(), "vincular");
             }
         });
 
