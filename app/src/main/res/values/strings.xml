@@ -27,4 +27,6 @@
     <string name="Salir">salir</string>
     <string name="sesion">sesion</string>
     <string name="isRegister">isRegister</string>
+    <string name="empty_not_saved">No persistida</string>
+    <string name="Centrales">Centrales</string>
 </resources>

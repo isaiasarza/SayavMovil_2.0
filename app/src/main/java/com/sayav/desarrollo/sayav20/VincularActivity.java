@@ -15,7 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.sayav.desarrollo.sayav20.central.Central;
+import com.sayav.desarrollo.sayav20.central.CentralViewModel;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -39,11 +43,14 @@ public class VincularActivity extends MenuActivity {
     private String token;
     private String phoneNumber;
     private MyFirebaseIDService firebase;
+    private CentralViewModel centralViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        centralViewModel = ViewModelProviders.of(this).get(CentralViewModel.class);
+
         firebase = new MyFirebaseIDService(this);
         button = (Button) findViewById(R.id.guardarToken);
         button.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +81,7 @@ public class VincularActivity extends MenuActivity {
     }
 
     public void vincular() {
+        centralViewModel.insert(new Central("isaunp.ddns.net",20000));
         SharedPreferences sharedPreferences = getSharedPreferences("datos", MODE_PRIVATE);
 
         textView = (EditText) findViewById(R.id.dominioCampo);

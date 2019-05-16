@@ -28,11 +28,15 @@ public abstract class MenuActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("sesion", MODE_PRIVATE);
 
         boolean sesion = sharedPreferences.getBoolean(String.valueOf(R.string.sesion), false);
-
+        Intent intent;
 
             switch (item.getItemId()) {
                 case R.id.BandejaEItem:
-                    Intent intent = new Intent(this, BandejaEntrada.class);
+                    intent = new Intent(this, BandejaEntrada.class);
+                    startActivity(intent);
+                    return true;
+                case R.id.centralesItem:
+                    intent = new Intent(this, CentralesActivity.class);
                     startActivity(intent);
                     return true;
                 case R.id.salirItem:

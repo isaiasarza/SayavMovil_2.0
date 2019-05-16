@@ -33,7 +33,7 @@
         <activity
             android:name=".BandejaEntrada">
         </activity>
-
+        <activity android:name=".CentralesActivity"></activity>
 
 
 
