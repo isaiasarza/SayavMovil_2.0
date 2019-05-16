@@ -3,6 +3,7 @@ package com.sayav.desarrollo.sayav20;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.sayav.desarrollo.sayav20.central.Central;
 import com.sayav.desarrollo.sayav20.central.CentralListAdapter;
@@ -21,7 +23,7 @@ import java.util.List;
 
 public class CentralesActivity extends AppCompatActivity {
 
-    private static final int NEW_CENTRAL_ACTIVITY_REQUEST_CODE = 4;
+    private static final int NEW_CENTRAL_ACTIVITY_REQUEST_CODE = 1;
     private static final String EXTRA_REPLY = "com.example.android.centrallistsql.REPLY";
     private CentralViewModel mCentralViewModel;
 
@@ -40,15 +42,21 @@ public class CentralesActivity extends AppCompatActivity {
         // Get a new or existing ViewModel from the ViewModelProvider.
         mCentralViewModel = ViewModelProviders.of(this).get(CentralViewModel.class);
 
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CentralesActivity.this, VincularActivity.class);
+                startActivityForResult(intent, NEW_CENTRAL_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
         mCentralViewModel.getAllCentrals().observe(this, new Observer<List<Central>>() {
             @Override
             public void onChanged(@Nullable final List<Central> centrales) {
                 // Update the cached copy of the words in the adapter.
                // RecyclerView recyclerView = findViewById(R.id.recyclerview);
                 adapter.setCentrales(centrales);
-
-
-
             }
         });
 

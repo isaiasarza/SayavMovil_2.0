@@ -46,7 +46,7 @@ public class CentralListAdapter extends RecyclerView.Adapter<CentralListAdapter.
             Central current = mCentrales.get(position);
             Log.i("Central", current.toString());
             holder.subdominio.setText(current.getSubdominio());
-            holder.puerto.setText(current.getPuerto());
+            holder.puerto.setText(Integer.toString(current.getPuerto()));
         } else {
             // Covers the case of data not being ready yet.
             holder.subdominio.setText("No hay subdominio");

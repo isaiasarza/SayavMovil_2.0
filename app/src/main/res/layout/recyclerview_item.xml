@@ -11,14 +11,14 @@
             style="@style/word_title"
             android:layout_width="204dp"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light" />
+            android:background="@android:color/holo_blue_dark" />
 
         <TextView
             android:id="@+id/puerto"
             style="@style/word_title"
             android:layout_width="218dp"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light" />
+            android:background="@android:color/holo_blue_dark" />
     </GridLayout>
 
 </LinearLayout>

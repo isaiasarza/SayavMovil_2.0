@@ -81,7 +81,7 @@ public class VincularActivity extends MenuActivity {
     }
 
     public void vincular() {
-        centralViewModel.insert(new Central("isaunp.ddns.net",20000));
+     //   centralViewModel.insert(new Central("isaunp.ddns.net",20000));
         SharedPreferences sharedPreferences = getSharedPreferences("datos", MODE_PRIVATE);
 
         textView = (EditText) findViewById(R.id.dominioCampo);
