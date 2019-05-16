@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "598163870574-b50im91th4uasq1nrs6t218qr64ji7li.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sayav.desarrollo.sayav20",
+            "certificate_hash": "b798beb02698758e84e9f031e6563dbe900ad09e"
+          }
+        },
+        {
           "client_id": "598163870574-qdhju2isd8u144k0erref4bq3mlsa310.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -25,15 +33,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "598163870574-qdhju2isd8u144k0erref4bq3mlsa310.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

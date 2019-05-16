@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,18 +31,25 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         if(!isRegister()){
-            TextView lblGotoRegister = (TextView) findViewById(R.id.link_to_register);
+            Log.i("LoginActivity","Usuario no registrado");
+            iniciarRegistro();
+           /* TextView lblGotoRegister = (TextView) findViewById(R.id.link_to_register);
             lblGotoRegister.setOnClickListener(new View.OnClickListener() {
                @Override
                 public void onClick(View v) {
                     iniciarRegistro();
                 }
-            });
+            });*/
         }
     }
 
     private boolean isRegister() {
+        Log.i("LoginActivity","Verificando Registro");
+        EditText email, password;
+
+
         SharedPreferences sharedPreferences = getSharedPreferences("sesion", MODE_PRIVATE);
+        Log.i("LoginActivity","Is register: " + Boolean.toString(sharedPreferences.getBoolean(String.valueOf(R.string.isRegister),false)));
         return sharedPreferences.getBoolean(String.valueOf(R.string.isRegister),false);
     }
 
@@ -54,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean validarEmail(String email){
+        Log.i("LoginActivity","Validando Email");
+
         if(email == null || email.isEmpty()){
             return false;
         }
@@ -61,6 +71,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void verificarUsuario() {
+        Log.i("LoginActivity","Verificando Usuario");
+
         EditText email, password;
 
         email = (EditText) findViewById(R.id.emailId);
@@ -72,9 +84,13 @@ public class LoginActivity extends AppCompatActivity {
         }
         BDSayavMovil db = new BDSayavMovil(this);
         Cursor cursor = db.obtenerUsuario(email.getText().toString(), password.getText().toString(), this);
+        Log.i("LoginActivity","Cursor count:  " + cursor.getCount());
 
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
+            Log.i("LoginActivity","Usuario " + cursor.getString(1));
+            Log.i("LoginActivity","Password " + cursor.getString(4));
+
             if(verificarPassword(password.getText().toString(), cursor.getString(4))){
                 Toast.makeText(this, "Bienvenido: " + cursor.getString(1) + " " + cursor.getString(2), Toast.LENGTH_SHORT).show();
                 setBooleanControl();
