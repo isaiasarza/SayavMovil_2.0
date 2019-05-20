@@ -1,13 +1,11 @@
 package com.sayav.desarrollo.sayav20;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -22,16 +20,19 @@ import com.sayav.desarrollo.sayav20.central.CentralViewModel;
 
 import java.util.List;
 
-public class CentralesActivity extends AppCompatActivity {
+public class CentralesActivity extends MenuActivity {
 
     private static final int NEW_CENTRAL_ACTIVITY_REQUEST_CODE = 1;
     private static final String EXTRA_REPLY = "com.example.android.centrallistsql.REPLY";
     private CentralViewModel mCentralViewModel;
+    private MyFirebaseIDService firebase;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_centrales);
+        firebase = new MyFirebaseIDService(this);
+
         mCentralViewModel = ViewModelProviders.of(this).get(CentralViewModel.class);
         final CentralListAdapter adapter = new CentralListAdapter(getApplicationContext());
 

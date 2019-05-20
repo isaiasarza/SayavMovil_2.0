@@ -23,6 +23,7 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+    private static final String CHANNEL_ID = "5";
 
     /**
      * Called when message is received.
@@ -61,12 +62,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+        Log.i("Mensaje", message);
+       NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+               .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+               .setContentTitle(title)
+               .setContentText(message)
+               .setStyle(new NotificationCompat.BigTextStyle()
+                       .bigText(message))
+               .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+      /* NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent);*/
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 

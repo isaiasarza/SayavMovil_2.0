@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -15,9 +16,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.sayav.desarrollo.sayav20.central.Central;
 import com.sayav.desarrollo.sayav20.central.CentralViewModel;
 
@@ -51,7 +56,9 @@ public class VincularActivity extends MenuActivity {
         setContentView(R.layout.activity_main);
         centralViewModel = ViewModelProviders.of(this).get(CentralViewModel.class);
 
-        firebase = new MyFirebaseIDService(this);
+        //firebase = new MyFirebaseIDService(this);
+        Intent intent = new Intent(this, MyFirebaseIDService.class);
+        startService(intent);
         button = (Button) findViewById(R.id.guardarToken);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -82,12 +89,28 @@ public class VincularActivity extends MenuActivity {
 
     public void vincular() {
      //   centralViewModel.insert(new Central("isaunp.ddns.net",20000));
+        Log.i("Vincular","Vinculando");
+
         SharedPreferences sharedPreferences = getSharedPreferences("datos", MODE_PRIVATE);
 
-        textView = (EditText) findViewById(R.id.dominioCampo);
-        central = textView.getText().toString();
-
         token = sharedPreferences.getString(String.valueOf(R.string.token), "");
+
+        Log.i("Token","Pidiendo token");
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("Token", "getInstanceId failed", task.getException());
+                            return;
+                        }
+                        // Get new Instance ID token
+                        token = task.getResult().getToken();
+                        // Log and toast
+                        Log.d("Token", "Se obtuvo el token");
+                        Toast.makeText(VincularActivity.this, "Se obtuvo el token", Toast.LENGTH_SHORT).show();
+                    }
+                });
         if (token.isEmpty()) {
             Toast.makeText(getApplicationContext(),
                     "El token todavía no esta disponible, intente en otro momento", Toast.LENGTH_SHORT).show();
