@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.sayav.desarrollo.sayav20.central.Central;
 import com.sayav.desarrollo.sayav20.central.CentralDao;
 
-@Database(entities = {Central.class},version=1)
+@Database(entities = {Central.class},version=3)
 public abstract class SayavRoomDatabase extends RoomDatabase {
     public abstract CentralDao centralDao();
     private static volatile SayavRoomDatabase INSTANCE;
@@ -24,6 +24,7 @@ public abstract class SayavRoomDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             SayavRoomDatabase.class, "sayav_room_database")
+                            .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback).build();
                 }
             }
@@ -44,7 +45,7 @@ public abstract class SayavRoomDatabase extends RoomDatabase {
 
                     @Override
                     protected Void doInBackground(final Void... params) {
-                        mDao.deleteAll();
+                       mDao.deleteAll();
                  /*       Central central = new Central("isaunp.ddns.net", 20000);
                         mDao.insert(central);
                         central = new Central("lucasboba.ddns.net", 20001);

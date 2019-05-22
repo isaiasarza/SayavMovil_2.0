@@ -1,7 +1,10 @@
 package com.sayav.desarrollo.sayav20;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,23 +23,27 @@ import com.sayav.desarrollo.sayav20.central.CentralViewModel;
 
 import java.util.List;
 
-public class CentralesActivity extends MenuActivity {
+import static com.sayav.desarrollo.sayav20.R.layout.activity_centrales;
+
+public class CentralesActivity extends MenuActivity implements VincularDialog.OnComplete {
 
     private static final int NEW_CENTRAL_ACTIVITY_REQUEST_CODE = 1;
     private static final String EXTRA_REPLY = "com.example.android.centrallistsql.REPLY";
     private CentralViewModel mCentralViewModel;
     private MyFirebaseIDService firebase;
-
+    private DialogFragment vincularFragment;
+    RecyclerView recyclerView;
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_centrales);
+        setContentView(activity_centrales);
         firebase = new MyFirebaseIDService(this);
 
         mCentralViewModel = ViewModelProviders.of(this).get(CentralViewModel.class);
         final CentralListAdapter adapter = new CentralListAdapter(getApplicationContext());
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        recyclerView = findViewById(R.id.recyclerview);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -48,8 +55,8 @@ public class CentralesActivity extends MenuActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new VincularDialog();
-                newFragment.show(getSupportFragmentManager(), "vincular");
+                vincularFragment = new VincularDialog();
+                vincularFragment.show(getSupportFragmentManager(), "vincular");
             }
         });
 
@@ -76,5 +83,17 @@ public class CentralesActivity extends MenuActivity {
                     R.string.empty_not_saved,
                     Snackbar.LENGTH_LONG).show();
         }
+    }
+
+
+    @Override
+    public void onComplete(Bundle bundle) {
+        boolean tokenOnServer = bundle.getBoolean("vincular");
+        String central = bundle.getString("central");
+        int puerto = bundle.getInt("puerto");
+        String text=bundle.getString("descripcion");
+        Log.i("onComplete",central);
+        Snackbar.make(recyclerView,text,Snackbar.LENGTH_SHORT).show();
+
     }
 }

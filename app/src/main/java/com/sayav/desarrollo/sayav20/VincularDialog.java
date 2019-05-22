@@ -1,8 +1,11 @@
 package com.sayav.desarrollo.sayav20;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +41,7 @@ public class VincularDialog extends DialogFragment {
     private String puerto;
     private View mView;
     Central central;
+    OnComplete mOnCompleteListener;
     private CentralViewModel centralViewModel;
     private MyFirebaseIDService firebase;
     private String token = "";
@@ -53,9 +57,9 @@ public class VincularDialog extends DialogFragment {
         mView = inflater.inflate(R.layout.dialog_vincular, null);
         centralViewModel = ViewModelProviders.of(this).get(CentralViewModel.class);
 
-        final EditText eSubdominio = (EditText)mView.findViewById(R.id.nuevo_subdominio);
+        final EditText eSubdominio = (EditText) mView.findViewById(R.id.nuevo_subdominio);
         final EditText ePuerto = (EditText) mView.findViewById(R.id.nuevo_puerto);
-                // Inflate and set the layout for the dialog
+        // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(mView)
                 // Add action buttons
@@ -63,8 +67,8 @@ public class VincularDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         subdominio = eSubdominio.getText().toString();
-                        puerto =  ePuerto.getText().toString();
-                        central = new Central(subdominio,Integer.valueOf(puerto).intValue());
+                        puerto = ePuerto.getText().toString();
+                        central = new Central(subdominio, Integer.valueOf(puerto).intValue());
                         Log.i("Vinculando", central.toString());
                         vincular();
                     }
@@ -77,12 +81,29 @@ public class VincularDialog extends DialogFragment {
         return builder.create();
     }
 
+    public interface OnComplete {
+        void onComplete(final Bundle bundle);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+
+            mOnCompleteListener = (OnComplete) context;
+
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement NewItemDialogFragment");
+        }
+    }
+
     public void vincular() {
-        Log.i("Vincular","Vinculando " + central);
+        Log.i("Vincular", "Vinculando " + central);
         //   centralViewModel.insert(new Central("isaunp.ddns.net",20000));
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("datos", MODE_PRIVATE);
 
-      // final String token = sharedPreferences.getString(String.valueOf(R.string.token), "");
+        // final String token = sharedPreferences.getString(String.valueOf(R.string.token), "");
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -95,36 +116,66 @@ public class VincularDialog extends DialogFragment {
                         token = task.getResult().getToken();
                         // Log and toast
                         Log.i("Token", "Se obtuvo el token");
-                     //   Toast.makeText(getContext(), "Se obtuvo el token", Toast.LENGTH_SHORT).show();
                         String nombre = "";
-                        //String nombre = sharedPreferences.getString(String.valueOf(R.string.))
                         if (token.isEmpty()) {
-                            Snackbar.make(mView,"El token no esta disponible, intente en otro momento",Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(mView, "El token no esta disponible, intente en otro momento", Snackbar.LENGTH_SHORT).show();
                             return;
                         }
                         VincularDialog.Vinculator vinculator = new VincularDialog.Vinculator();
-                        vinculator.execute(central.getSubdominio()+":"+central.getPuerto(), token, nombre);
+                        vinculator.execute(central.getSubdominio() + ":" + central.getPuerto(), token, nombre);
                         try {
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("vinculado", tokenOnServer);
+                            bundle.putString("central", central.getSubdominio());
+                            bundle.putInt("puerto", central.getId());
                             tokenOnServer = vinculator.get();
+
+
+                            if (tokenOnServer) {
+                                try {
+                                    if(centralViewModel.getCentral(central) == null){
+                                        centralViewModel.insert(central);
+                                        bundle.putString("descripcion", "Vinculacion con central " + central + " exitosa");
+                                    }else{
+                                        bundle.putString("descripcion", "La central " + central + " ya existe");
+                                    }
+
+
+                                } catch (SQLiteConstraintException e) {
+                                    bundle.putString("descripcion", "La central " + central + " ya existe");
+                                }
+                            } else
+                                bundle.putString("descripcion", "La central " + central + " no pudo ser vinculada");
+                            mOnCompleteListener.onComplete(bundle);
+
                         } catch (InterruptedException e) {
-                            Log.e("TokenOnServerException",e.getMessage());
+                            Log.e("TokenOnServerException", e.getMessage());
                             e.printStackTrace();
                         } catch (ExecutionException e) {
-                            Log.e("TokenOnServerException",e.getMessage());
+                            Log.e("TokenOnServerException", e.getMessage());
                             e.printStackTrace();
                         }
-                        Log.e("TokenOnServer",Boolean.toString(tokenOnServer));
-
-                        if(tokenOnServer) {
-                            centralViewModel.insert(central);
-                            Snackbar.make(mView,"Vinculacion con central "+ central + " exitosa",Snackbar.LENGTH_SHORT).show();
-                        }else{
-                            Snackbar.make(mView,"No se pudo vincular con la central "+ central,Snackbar.LENGTH_SHORT).show();
-                        }
+                        Log.e("TokenOnServer", Boolean.toString(tokenOnServer));
                     }
                 });
-
     }
+
+    /*public interface OnCompleteListener {
+        void onComplete (final Bundle bundle);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+
+            mOnCompleteListener = (OnCompleteListener) context;
+
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement NewItemDialogFragment");
+        }
+    }*/
 
     private class Vinculator extends AsyncTask<String, Void, Boolean> {
 
@@ -140,7 +191,7 @@ public class VincularDialog extends DialogFragment {
         public Boolean sendRegistrationToServer(String server, String token, String phoneNumber) {
 
             String url = "http://" + server + "/notification/" + token + "/";
-            Log.i("Send Token","Enviando token a servidor: " + url );
+            Log.i("Send Token", "Enviando token a servidor: " + url);
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.connectTimeout(60, TimeUnit.SECONDS);
@@ -173,5 +224,6 @@ public class VincularDialog extends DialogFragment {
         }
 
     }
+
 
 }

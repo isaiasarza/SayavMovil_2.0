@@ -15,7 +15,14 @@
 
     </ListView>-->
 
-    <include layout="@layout/content_centrales" />
+    <!--<include layout="@layout/content_centrales" />-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"
+        tools:listitem="@layout/recyclerview_item"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
