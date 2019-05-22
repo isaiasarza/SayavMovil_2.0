@@ -16,6 +16,9 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Naza on 31/10/2016.
  */
@@ -36,7 +39,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Log.d("", "Remote Message " + remoteMessage);
 
-        sendNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("message"));
+        showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("message"));
         // Gets the data repository in write mode
         guardarNotificacion(remoteMessage);
     }
@@ -57,7 +60,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
    private void showNotification(String message,String title) {
-        Intent i = new Intent(this,VincularActivity.class);
+        Intent i = new Intent(this,BandejaEntrada.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
@@ -65,18 +68,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.i("Mensaje", message);
        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+               .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                       R.drawable.common_google_signin_btn_icon_dark))
                .setContentTitle(title)
+               .setContentInfo(message)
                .setContentText(message)
+               .setSubText("Fecha: " + new SimpleDateFormat("dd/mm/yyyy hh:mm").format(new Date()))
                .setStyle(new NotificationCompat.BigTextStyle()
                        .bigText(message))
-               .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-      /* NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);*/
+               .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+               .setSound(defaultSoundUri)
+               .setContentIntent(pendingIntent);
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -84,7 +86,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String message,String title) {
-        Intent intent = new Intent(this, VincularActivity.class);
+        Intent intent = new Intent(this, BandejaEntrada.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
