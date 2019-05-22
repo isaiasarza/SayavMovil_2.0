@@ -45,7 +45,7 @@ public abstract class SayavRoomDatabase extends RoomDatabase {
 
                     @Override
                     protected Void doInBackground(final Void... params) {
-                       mDao.deleteAll();
+                       //mDao.deleteAll();
                  /*       Central central = new Central("isaunp.ddns.net", 20000);
                         mDao.insert(central);
                         central = new Central("lucasboba.ddns.net", 20001);
