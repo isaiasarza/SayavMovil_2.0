@@ -25,15 +25,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".actividadRegistrar"></activity>
-        <activity
-            android:name=".VincularActivity"
-            android:label="@string/app_name">
-        </activity>
         <activity
             android:name=".BandejaEntrada">
         </activity>
-
+        <activity android:name=".CentralesActivity"></activity>
 
 
 

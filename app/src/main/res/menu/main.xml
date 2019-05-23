@@ -13,6 +13,10 @@
         android:title="@string/Registration"/>
 
     <item
+        android:id="@+id/centralesItem"
+        android:title="@string/Centrales"/>
+
+    <item
         android:id="@+id/BandejaEItem"
         android:title="@string/BandejaE"/>
 

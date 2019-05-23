@@ -6,7 +6,9 @@ import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -14,12 +16,14 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 /**
  * Created by Naza on 14/6/2017.
@@ -36,6 +40,8 @@ public class BandejaEntrada extends ListActivity implements LoaderManager.Loader
         super.onCreate(savedInstanceState);
        // setContentView(R.layout.activity_bandeja);
         // Create a progress bar to display while the list loads
+
+
         ProgressBar progressBar = new ProgressBar(this);
 
         progressBar.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
@@ -61,7 +67,12 @@ public class BandejaEntrada extends ListActivity implements LoaderManager.Loader
         getLoaderManager().initLoader(0, null, this);
     }
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri uri = NotificacionContentProvider.CONTENT_URI;
@@ -105,6 +116,41 @@ public class BandejaEntrada extends ListActivity implements LoaderManager.Loader
             }
         });
         dialogo1.show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("sesion", MODE_PRIVATE);
+
+        boolean sesion = sharedPreferences.getBoolean(String.valueOf(R.string.sesion), false);
+        Intent intent;
+
+        switch (item.getItemId()) {
+            case R.id.BandejaEItem:
+                intent = new Intent(this, BandejaEntrada.class);
+                startActivity(intent);
+                return true;
+            case R.id.centralesItem:
+                intent = new Intent(this, CentralesActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.salirItem:
+                Toast.makeText(this, "Adios", Toast.LENGTH_LONG).show();
+                setFalseSesion();
+                super.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setFalseSesion() {
+        SharedPreferences sharedPreferences = getSharedPreferences("sesion", MODE_PRIVATE);
+
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putBoolean(String.valueOf(R.string.sesion),false);
+        edit.commit();
     }
 
 }
