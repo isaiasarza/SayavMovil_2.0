@@ -9,12 +9,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.util.JsonReader;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.sayav.desarrollo.sayav20.mensaje.Mensaje;
+import com.google.gson.Gson;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +31,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
     private static final String CHANNEL_ID = "5";
-
+    private JSONObject jsonObject;
+    private JsonReader jsonReader;
+    private Gson gson;
+    //private G
     /**
      * Called when message is received.
      *
@@ -39,7 +46,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Log.d("", "Remote Message " + remoteMessage);
 
-        showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("message"));
+        //jsonObject.
+        gson = new Gson();
+        Mensaje mensaje = gson.fromJson(remoteMessage.getData().get("message"),Mensaje.class);
+        showNotification(remoteMessage.getData().get("title"),mensaje);
         // Gets the data repository in write mode
         guardarNotificacion(remoteMessage);
     }
@@ -59,23 +69,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         db.close();
     }
 
-   private void showNotification(String message,String title) {
+   private void showNotification(String title, Mensaje message) {
         Intent i = new Intent(this,BandejaEntrada.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Log.i("Mensaje", message);
+        Log.i("Mensaje", message.getDescripcion());
        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
                        R.drawable.common_google_signin_btn_icon_dark))
                .setContentTitle(title)
-               .setContentInfo(message)
-               .setContentText(message)
-               .setSubText("Fecha: " + new SimpleDateFormat("dd/mm/yyyy hh:mm").format(new Date()))
+               .setContentInfo(message.getDetalle())
+               .setContentText(message.getDescripcion())
+               .setSubText("Fecha Envio de Central: " + new SimpleDateFormat("dd/mm/yyyy hh:mm").format(message.getFechaReenvio()))
                .setStyle(new NotificationCompat.BigTextStyle()
-                       .bigText(message))
+                       .bigText(message.getDescripcion()))
                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                .setSound(defaultSoundUri)
                .setContentIntent(pendingIntent);
