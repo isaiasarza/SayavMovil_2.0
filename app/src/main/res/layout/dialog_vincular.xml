@@ -9,7 +9,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="text"
-            android:hint="@string/nuevo_subdominio"/>
+            android:hint="@string/nuevo_subdominio" />
 
         <EditText
             android:id="@+id/nuevo_puerto"
