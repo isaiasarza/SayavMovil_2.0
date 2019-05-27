@@ -1,8 +1,8 @@
 package com.sayav.desarrollo.sayav20;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,8 +12,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.sayav.desarrollo.sayav20.usuario.Usuario;
+import com.sayav.desarrollo.sayav20.usuario.UsuarioRepository;
+
+import java.util.concurrent.ExecutionException;
+
 public class LoginActivity extends AppCompatActivity {
 
+    private UsuarioRepository usuarioRepository;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,9 +30,16 @@ public class LoginActivity extends AppCompatActivity {
         Button button = (Button) findViewById(R.id.btnLogin);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                verificarUsuario();
+                try {
+                    verificarUsuario(v);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
+        usuarioRepository = new UsuarioRepository(getApplication());
         if(!isRegister()){
             Log.i("LoginActivity","Usuario no registrado");
             iniciarRegistro();
@@ -66,9 +80,10 @@ public class LoginActivity extends AppCompatActivity {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public void verificarUsuario() {
+    @SuppressLint("ResourceAsColor")
+    public void verificarUsuario(View v) throws ExecutionException, InterruptedException {
         Log.i("LoginActivity","Verificando Usuario");
-
+        Usuario usuario = new Usuario();
         EditText email, password;
 
         email = (EditText) findViewById(R.id.emailId);
@@ -78,27 +93,15 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Email incorrecto", Toast.LENGTH_SHORT).show();
             return;
         }
-        BDSayavMovil db = new BDSayavMovil(this);
-        Cursor cursor = db.obtenerUsuario(email.getText().toString(), password.getText().toString(), this);
-        Log.i("LoginActivity","Cursor count:  " + cursor.getCount());
-
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            Log.i("LoginActivity","Usuario " + cursor.getString(1));
-            Log.i("LoginActivity","Password " + cursor.getString(4));
-
-            if(verificarPassword(password.getText().toString(), cursor.getString(4))){
-                Toast.makeText(this, "Bienvenido: " + cursor.getString(1) + " " + cursor.getString(2), Toast.LENGTH_SHORT).show();
-                setBooleanControl();
-                Intent intent = new Intent(this, CentralesActivity.class);
-                startActivity(intent);
-                return;
-            }
-            Toast.makeText(this, "Password Incorrecto", Toast.LENGTH_SHORT).show();
-            return;
+        usuario.setEmail(email.getText().toString());
+        usuario.setPassword(password.getText().toString());
+        if(usuarioRepository.validarUsuario(usuario)){
+            setBooleanControl();
+            Intent intent = new Intent(this, CentralesActivity.class);
+            startActivity(intent);
+        }else{
+            Snackbar.make(v,"Credenciales Invalidas",Snackbar.LENGTH_SHORT).setActionTextColor(android.R.color.holo_red_light).show();
         }
-        Toast.makeText(this, "El usuario no es correcto", Toast.LENGTH_SHORT).show();
-        db.close();
     }
 
     private void setBooleanControl() {

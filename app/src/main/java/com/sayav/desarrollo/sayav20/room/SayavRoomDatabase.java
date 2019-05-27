@@ -12,10 +12,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.sayav.desarrollo.sayav20.central.Central;
 import com.sayav.desarrollo.sayav20.central.CentralDao;
+import com.sayav.desarrollo.sayav20.usuario.Usuario;
+import com.sayav.desarrollo.sayav20.usuario.UsuarioDao;
 
-@Database(entities = {Central.class},version=3)
+@Database(entities = {Central.class, Usuario.class},version=4)
 public abstract class SayavRoomDatabase extends RoomDatabase {
     public abstract CentralDao centralDao();
+    public abstract UsuarioDao usuarioDao();
     private static volatile SayavRoomDatabase INSTANCE;
 
     public static SayavRoomDatabase getDatabase(final Context context) {
@@ -38,9 +41,11 @@ public abstract class SayavRoomDatabase extends RoomDatabase {
                 class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
                     private final CentralDao mDao;
+                    private final UsuarioDao mUsuarioDao;
 
                     PopulateDbAsync(SayavRoomDatabase db) {
                         mDao = db.centralDao();
+                        mUsuarioDao = db.usuarioDao();
                     }
 
                     @Override
